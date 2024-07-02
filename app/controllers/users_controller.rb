@@ -8,9 +8,10 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-   
+    #binding.irb
       if @user.save
-        UserMailer.with(to: @user.email, name: @user.name).welcome.deliver_now
+        UserMailer.with(to: @user.email, name: @user.name).welcome.deliver_later
+        #AsyncLogJob.set(wait: 10.seconds).perform_later(@user.email, @user.name)
         log_in(@user)
         redirect_to user_path(@user.id), notice: 'アカウントを登録しました。'
       else
