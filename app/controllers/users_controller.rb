@@ -8,12 +8,15 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    if @user.save
-      log_in(@user)
-      redirect_to user_path(@user.id), notice: 'アカウントを登録しました。'
-    else
-      render :new
-    end
+   
+      if @user.save
+        UserMailer.with(to: @user.email, name: @user.name).welcome.deliver_now
+        log_in(@user)
+        redirect_to user_path(@user.id), notice: 'アカウントを登録しました。'
+      else
+        render :new
+      end
+ 
   end
 
   def show
